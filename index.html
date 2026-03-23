@@ -6,5 +6,36 @@
 <body style="background: rgb(0, 255, 174);">
   <h1>hello </h1>
   <p>this is my cool website </p>
+  
+  <h2>Mini Game: Guess the Number</h2>
+  <p>I'm thinking of a number between 1 and 100. Can you guess it?</p>
+  <input type="number" id="guess" min="1" max="100">
+  <button onclick="checkGuess()">Guess</button>
+  <p id="result"></p>
+  
+  <script>
+    let randomNumber = Math.floor(Math.random() * 100) + 1;
+    let attempts = 0;
+    
+    function checkGuess() {
+      const guess = parseInt(document.getElementById('guess').value);
+      attempts++;
+      
+      if (isNaN(guess) || guess < 1 || guess > 100) {
+        document.getElementById('result').textContent = 'Please enter a number between 1 and 100.';
+        return;
+      }
+      
+      if (guess === randomNumber) {
+        document.getElementById('result').textContent = `Congratulations! You guessed it in ${attempts} attempts.`;
+        randomNumber = Math.floor(Math.random() * 100) + 1;
+        attempts = 0;
+      } else if (guess < randomNumber) {
+        document.getElementById('result').textContent = 'Too low! Try again.';
+      } else {
+        document.getElementById('result').textContent = 'Too high! Try again.';
+      }
+    }
+  </script>
 </body>
 </html>
