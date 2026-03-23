@@ -67,7 +67,7 @@
       const next = questions[currentQuestion].yes;
       if (typeof next === 'string') {
         document.getElementById('gameResult').textContent = `I guess it's a ${next}!`;
-        document.getElementById('gameArea').style.display = 'none';
+        document.getElementById('gameArea').style.display = 'block';
         document.getElementById('startGame').style.display = 'block';
       } else {
         currentQuestion = next;
