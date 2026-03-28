@@ -172,12 +172,12 @@
   </div>
   
   <div class="game-card">
-    <h2>Warhammer: Ultramarine Assault</h2>
-  <p>Use A/D to move, W to strike with your chainsword, S to charge the enemy. Deploy your Ultramarine and face the Chaos boss.</p>
-  <button id="startFightBtn" onclick="startFight()">Deploy Ultramarine</button>
-  <button id="startBossBtn" onclick="startBossFight()">Start Warhammer Boss</button>
+    <h2>Warhammer: Guilliman's Wrath</h2>
+  <p>Use A/D to move, W to strike with your blade, S to charge the enemy. Deploy Lord Guilliman and fight the Chaos Overlord.</p>
+  <button id="startFightBtn" onclick="startFight()">Deploy Guilliman</button>
+  <button id="startBossBtn" onclick="startBossFight()">Summon Chaos Overlord</button>
   <canvas id="warhammerCanvas" width="600" height="300" style="display: block; margin-top: 10px;"></canvas>
-  <p id="fightStatus">Press Start to deploy your Ultramarine.</p>
+  <p id="fightStatus">Press Start to deploy Lord Guilliman.</p>
   </div>
   
   <script>
@@ -352,7 +352,7 @@
     let bossMode = false;
     let player = { x: 140, y: 220, health: 100, action: 'idle', timer: 0 };
     let enemy = { x: 460, y: 220, health: 100, action: 'idle', timer: 0, cooldown: 30, isBoss: false };
-    let fightMessage = 'Press Start to deploy your Space Marine.';
+    let fightMessage = 'Press Start to deploy Lord Guilliman.';
     const fightKeys = { left: false, right: false };
     let sparks = [];
     
@@ -363,9 +363,9 @@
     function startFight() {
       bossMode = false;
       fightRunning = true;
-      player = { x: 140, y: 220, health: 100, action: 'idle', timer: 0 };
-      enemy = { x: 460, y: 220, health: 100, action: 'idle', timer: 0, cooldown: 30, isBoss: false };
-      fightMessage = 'Space Marine enters the fray!';
+      player = { x: 140, y: 220, health: 120, action: 'idle', timer: 0, name: 'Roboute Guilliman' };
+      enemy = { x: 460, y: 220, health: 120, action: 'idle', timer: 0, cooldown: 30, isBoss: false, name: 'Chaos Champion' };
+      fightMessage = 'Roboute Guilliman charges into battle!';
       document.getElementById('fightStatus').textContent = fightMessage;
       fightLoop();
     }
@@ -373,9 +373,9 @@
     function startBossFight() {
       bossMode = true;
       fightRunning = true;
-      player = { x: 140, y: 220, health: 120, action: 'idle', timer: 0 };
-      enemy = { x: 470, y: 220, health: 220, action: 'idle', timer: 0, cooldown: 20, isBoss: true };
-      fightMessage = 'Warhammer boss unleashed!';
+      player = { x: 140, y: 220, health: 120, action: 'idle', timer: 0, name: 'Roboute Guilliman' };
+      enemy = { x: 470, y: 220, health: 220, action: 'idle', timer: 0, cooldown: 20, isBoss: true, name: 'Chaos Overlord' };
+      fightMessage = 'Chaos Overlord rises to challenge Guilliman!';
       document.getElementById('fightStatus').textContent = fightMessage;
       fightLoop();
     }
@@ -388,14 +388,15 @@
     
     function applyAttack(attacker, defender, action, side) {
       const distance = Math.abs(attacker.x - defender.x);
+      const attackerName = attacker.name || (side === 'Player' ? 'Guilliman' : 'Enemy');
       if (distance <= 130) {
         let damage = action === 'kick' ? 18 : 12;
         if (attacker.isBoss) damage += 8;
         if (defender.isBoss && side === 'Player') damage += 6;
         defender.health = Math.max(0, defender.health - damage);
-        fightMessage = `${side} ${action}s and deals ${damage}!`;
+        fightMessage = `${attackerName} ${action}s and deals ${damage}!`;
       } else {
-        fightMessage = `${side} ${action}s and misses.`;
+        fightMessage = `${attackerName} ${action}s and misses.`;
       }
     }
     
@@ -464,7 +465,7 @@
       
       if (player.health <= 0 || enemy.health <= 0) {
         fightRunning = false;
-        fightMessage = player.health <= 0 ? 'Enemy wins! Click Start to fight again.' : 'Player wins! Click Start to fight again.';
+        fightMessage = player.health <= 0 ? `${enemy.name || 'Chaos Overlord'} wins! Click Start to fight again.` : `${player.name || 'Guilliman'} wins! Click Start to fight again.`;
       }
       updateSparks();
       
@@ -657,8 +658,8 @@
       fightCtx.strokeRect(420, 30, 160, 14);
       fightCtx.fillStyle = '#cde';
       fightCtx.font = '16px Inter, Arial, sans-serif';
-      fightCtx.fillText('Player HP', 20, 22);
-      fightCtx.fillText(enemy.isBoss ? 'Boss HP' : 'Enemy HP', 420, 22);
+      fightCtx.fillText(player.name || 'Guilliman HP', 20, 22);
+      fightCtx.fillText(enemy.name || (enemy.isBoss ? 'Chaos Overlord HP' : 'Enemy HP'), 420, 22);
       drawWarhammerMarine(fightCtx, player, '#a8f8ff', true);
       drawWarhammerMarine(fightCtx, enemy, enemy.isBoss ? '#ffb64a' : '#57a7ff', false);
       fightCtx.globalCompositeOperation = 'lighter';
