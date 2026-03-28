@@ -172,12 +172,12 @@
   </div>
   
   <div class="game-card">
-    <h2>Warhammer Arena</h2>
-  <p>Use A/D to move, W to strike, S to charge. Click Start to deploy your Space Marine.</p>
-  <button id="startFightBtn" onclick="startFight()">Deploy Marine</button>
+    <h2>Warhammer: Ultramarine Assault</h2>
+  <p>Use A/D to move, W to strike with your chainsword, S to charge the enemy. Deploy your Ultramarine and face the Chaos boss.</p>
+  <button id="startFightBtn" onclick="startFight()">Deploy Ultramarine</button>
   <button id="startBossBtn" onclick="startBossFight()">Start Warhammer Boss</button>
   <canvas id="warhammerCanvas" width="600" height="300" style="display: block; margin-top: 10px;"></canvas>
-  <p id="fightStatus">Press Start to deploy your Space Marine.</p>
+  <p id="fightStatus">Press Start to deploy your Ultramarine.</p>
   </div>
   
   <script>
@@ -474,130 +474,146 @@
     function drawWarhammerMarine(ctx, actor, color, isPlayer) {
       ctx.save();
       const headX = actor.x;
-      const headY = actor.y - 50;
+      const headY = actor.y - 52;
 
       // Helmet
-      ctx.fillStyle = actor.isBoss ? '#2b2228' : '#10293e';
-      ctx.strokeStyle = actor.isBoss ? '#ffb85a' : '#7ce0ff';
+      ctx.fillStyle = actor.isBoss ? '#2c1f24' : '#163b72';
+      ctx.strokeStyle = actor.isBoss ? '#ffd77f' : '#8dc9ff';
       ctx.lineWidth = actor.isBoss ? 6 : 5;
       ctx.beginPath();
       ctx.arc(headX, headY, 18, 0, Math.PI * 2);
       ctx.fill();
       ctx.stroke();
-      ctx.fillStyle = '#14212a';
-      ctx.fillRect(headX - 12, headY - 8, 24, 10);
+
+      ctx.fillStyle = '#0c1622';
+      ctx.fillRect(headX - 11, headY - 10, 22, 12);
       ctx.fillStyle = '#000';
-      ctx.fillRect(headX - 10, headY - 16, 8, 5);
-      ctx.fillRect(headX + 2, headY - 16, 8, 5);
+      ctx.fillRect(headX - 9, headY - 20, 8, 6);
+      ctx.fillRect(headX + 1, headY - 20, 8, 6);
+      ctx.fillStyle = actor.isBoss ? '#ff8a3b' : '#66c7ff';
+      ctx.fillRect(headX - 10, headY - 12, 20, 4);
 
       if (actor.isBoss) {
-        ctx.fillStyle = '#ffde9f';
+        ctx.fillStyle = '#ffd77f';
         ctx.beginPath();
         ctx.moveTo(headX - 18, headY + 2);
         ctx.lineTo(headX - 28, headY - 28);
-        ctx.lineTo(headX - 10, headY - 22);
+        ctx.lineTo(headX - 12, headY - 22);
         ctx.closePath();
         ctx.fill();
         ctx.beginPath();
         ctx.moveTo(headX + 18, headY + 2);
         ctx.lineTo(headX + 28, headY - 28);
-        ctx.lineTo(headX + 10, headY - 22);
+        ctx.lineTo(headX + 12, headY - 22);
         ctx.closePath();
         ctx.fill();
       }
 
-      // Torso
-      ctx.fillStyle = actor.isBoss ? '#3a2d31' : '#0c415f';
-      ctx.strokeStyle = actor.isBoss ? '#ffb85a' : color;
+      // Chest
+      ctx.fillStyle = actor.isBoss ? '#3d3134' : '#1f4d85';
+      ctx.strokeStyle = actor.isBoss ? '#ffd77f' : '#8dc9ff';
       ctx.lineWidth = 4;
       ctx.beginPath();
-      ctx.moveTo(actor.x - 26, actor.y - 26);
-      ctx.lineTo(actor.x + 26, actor.y - 26);
-      ctx.lineTo(actor.x + 32, actor.y + 16);
-      ctx.lineTo(actor.x + 18, actor.y + 42);
-      ctx.lineTo(actor.x - 18, actor.y + 42);
-      ctx.lineTo(actor.x - 32, actor.y + 16);
+      ctx.moveTo(actor.x - 28, actor.y - 26);
+      ctx.lineTo(actor.x + 28, actor.y - 26);
+      ctx.lineTo(actor.x + 32, actor.y + 18);
+      ctx.lineTo(actor.x + 18, actor.y + 46);
+      ctx.lineTo(actor.x - 18, actor.y + 46);
+      ctx.lineTo(actor.x - 32, actor.y + 18);
       ctx.closePath();
       ctx.fill();
       ctx.stroke();
 
-      // Pauldrons
-      ctx.fillStyle = actor.isBoss ? '#3e2f2f' : '#153f5d';
-      ctx.fillRect(actor.x - 36, actor.y - 30, 18, 22);
-      ctx.fillRect(actor.x + 18, actor.y - 30, 18, 22);
-      ctx.strokeRect(actor.x - 36, actor.y - 30, 18, 22);
-      ctx.strokeRect(actor.x + 18, actor.y - 30, 18, 22);
-
-      // Legs
-      ctx.fillStyle = actor.isBoss ? '#2b2228' : '#0b2b40';
-      ctx.fillRect(actor.x - 20, actor.y + 14, 16, 32);
-      ctx.fillRect(actor.x + 4, actor.y + 14, 16, 32);
-      ctx.strokeRect(actor.x - 20, actor.y + 14, 16, 32);
-      ctx.strokeRect(actor.x + 4, actor.y + 14, 16, 32);
-
-      // Boots
-      ctx.fillStyle = actor.isBoss ? '#131010' : '#07141f';
-      ctx.fillRect(actor.x - 20, actor.y + 44, 16, 10);
-      ctx.fillRect(actor.x + 4, actor.y + 44, 16, 10);
-
-      // Arms
-      const leftShoulderX = actor.x - 28;
-      const rightShoulderX = actor.x + 28;
-      const leftHandX = actor.action === 'punch' ? actor.x - 46 : leftShoulderX;
-      const rightHandX = actor.action === 'punch' ? actor.x + 46 : rightShoulderX;
-
-      ctx.strokeStyle = actor.isBoss ? '#ffb85a' : color;
-      ctx.lineWidth = 10;
+      // Eagle badge / icon
+      ctx.fillStyle = actor.isBoss ? '#d8b16d' : '#b8d9ff';
       ctx.beginPath();
-      ctx.moveTo(actor.x - 18, actor.y - 16);
-      ctx.lineTo(leftShoulderX, actor.y - 8);
-      ctx.lineTo(leftHandX, actor.y - 8);
+      ctx.moveTo(actor.x, actor.y - 16);
+      ctx.lineTo(actor.x - 8, actor.y);
+      ctx.lineTo(actor.x, actor.y + 6);
+      ctx.lineTo(actor.x + 8, actor.y);
+      ctx.closePath();
+      ctx.fill();
+
+      // Pauldrons
+      ctx.fillStyle = actor.isBoss ? '#3f3239' : '#1a4b7c';
+      ctx.beginPath();
+      ctx.ellipse(actor.x - 36, actor.y - 26, 14, 18, 0, 0, Math.PI * 2);
+      ctx.fill();
       ctx.stroke();
       ctx.beginPath();
-      ctx.moveTo(actor.x + 18, actor.y - 16);
-      ctx.lineTo(rightShoulderX, actor.y - 8);
-      ctx.lineTo(rightHandX, actor.y - 8);
+      ctx.ellipse(actor.x + 36, actor.y - 26, 14, 18, 0, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.stroke();
+
+      // Legs
+      ctx.fillStyle = actor.isBoss ? '#2a1f24' : '#0e2b4e';
+      ctx.fillRect(actor.x - 22, actor.y + 14, 16, 32);
+      ctx.fillRect(actor.x + 6, actor.y + 14, 16, 32);
+      ctx.strokeRect(actor.x - 22, actor.y + 14, 16, 32);
+      ctx.strokeRect(actor.x + 6, actor.y + 14, 16, 32);
+
+      // Boots
+      ctx.fillStyle = actor.isBoss ? '#111010' : '#061127';
+      ctx.fillRect(actor.x - 22, actor.y + 44, 16, 10);
+      ctx.fillRect(actor.x + 6, actor.y + 44, 16, 10);
+
+      // Arms
+      const leftShoulder = actor.x - 28;
+      const rightShoulder = actor.x + 28;
+      const leftHand = actor.action === 'punch' ? actor.x - 48 : leftShoulder;
+      const rightHand = actor.action === 'punch' ? actor.x + 48 : rightShoulder;
+
+      ctx.lineWidth = 10;
+      ctx.strokeStyle = actor.isBoss ? '#ffd77f' : '#8dc9ff';
+      ctx.beginPath();
+      ctx.moveTo(actor.x - 18, actor.y - 18);
+      ctx.lineTo(leftShoulder, actor.y - 8);
+      ctx.lineTo(leftHand, actor.y - 8);
+      ctx.stroke();
+      ctx.beginPath();
+      ctx.moveTo(actor.x + 18, actor.y - 18);
+      ctx.lineTo(rightShoulder, actor.y - 8);
+      ctx.lineTo(rightHand, actor.y - 8);
       ctx.stroke();
 
       // Weapon
-      if (actor.isBoss) {
-        ctx.strokeStyle = '#ffb85a';
-        ctx.lineWidth = 12;
+      if (isPlayer) {
+        ctx.strokeStyle = '#f7f7f7';
+        ctx.lineWidth = 8;
         ctx.beginPath();
-        ctx.moveTo(rightHandX, actor.y - 8);
-        ctx.lineTo(rightHandX + 12, actor.y + 18);
+        ctx.moveTo(rightHand, actor.y - 8);
+        ctx.lineTo(rightHand + 24, actor.y - 8);
         ctx.stroke();
-        ctx.fillStyle = '#ffd98c';
-        ctx.fillRect(rightHandX - 10, actor.y + 10, 34, 14);
-        ctx.strokeStyle = '#ffe4b6';
-        ctx.lineWidth = 3;
-        ctx.strokeRect(rightHandX - 10, actor.y + 10, 34, 14);
+        ctx.fillStyle = '#8c8c8c';
+        ctx.fillRect(rightHand + 16, actor.y - 14, 16, 12);
+        ctx.fillStyle = '#ffffff';
+        for (let i = 0; i < 5; i++) {
+          ctx.fillRect(rightHand + 16 + i * 3, actor.y - 14, 2, 12);
+        }
+        ctx.strokeStyle = '#b8b8b8';
+        ctx.lineWidth = 2;
+        ctx.strokeRect(rightHand + 16, actor.y - 14, 16, 12);
       } else {
-        ctx.strokeStyle = '#7ce0ff';
+        ctx.strokeStyle = '#ffb85a';
         ctx.lineWidth = 10;
         ctx.beginPath();
-        ctx.moveTo(rightHandX, actor.y - 8);
-        ctx.lineTo(rightHandX + 20, actor.y - 8);
+        ctx.moveTo(rightHand, actor.y - 8);
+        ctx.lineTo(rightHand + 16, actor.y + 16);
         ctx.stroke();
-        ctx.beginPath();
-        ctx.moveTo(rightHandX + 6, actor.y - 16);
-        ctx.lineTo(rightHandX + 6, actor.y + 4);
-        ctx.stroke();
+        ctx.fillStyle = '#ffd98c';
+        ctx.fillRect(rightHand + 8, actor.y + 16, 18, 10);
       }
 
       if (actor.action === 'kick') {
-        const kickX = actor.x + (isPlayer ? 32 : -32);
+        const kickX = actor.x + (isPlayer ? 34 : -34);
         ctx.strokeStyle = actor.isBoss ? 'rgba(255,192,90,0.9)' : 'rgba(100,255,255,0.8)';
         ctx.lineWidth = 10;
         ctx.beginPath();
         ctx.moveTo(actor.x, actor.y + 26);
-        ctx.lineTo(kickX, actor.y + 46);
+        ctx.lineTo(kickX, actor.y + 48);
         ctx.stroke();
       }
 
-      ctx.fillStyle = '#000';
-      ctx.fillRect(headX - 10, headY - 16, 8, 5);
-      ctx.fillRect(headX + 2, headY - 16, 8, 5);
       ctx.restore();
     }
     
