@@ -184,8 +184,8 @@
   </div>
   
   <div class="game-card">
-    <h2>Warhammer: Guilliman's Wrath</h2>
-  <p>Use A/D to move, W to strike with your blade, S to charge the enemy. Deploy Lord Guilliman and fight the Chaos Overlord.</p>
+    <h2>Warhammer: Legendary Duel</h2>
+  <p>Use A/D to move, W to strike with your blade, S to charge the enemy. Deploy Lord Guilliman in an epic clash against the Chaos Overlord.</p>
   <div class="warhammer-banner">
     <img alt="Warhammer banner" src="data:image/svg+xml;utf8,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20viewBox%3D%220%200%20320%20180%22%3E%3Cdefs%3E%3ClinearGradient%20id%3D%22bg%22%20x1%3D%220%22%20y1%3D%220%22%20x2%3D%221%22%20y2%3D%221%22%3E%3Cstop%20offset%3D%220%25%22%20stop-color%3D%22%2307203a%22/%3E%3Cstop%20offset%3D%22100%25%22%20stop-color%3D%22%230d3a60%22/%3E%3C/linearGradient%3E%3ClinearGradient%20id%3D%22gold%22%20x1%3D%220%22%20y1%3D%220%22%20x2%3D%221%22%20y2%3D%221%22%3E%3Cstop%20offset%3D%220%25%22%20stop-color%3D%22%23ffe08a%22/%3E%3Cstop%20offset%3D%22100%25%22%20stop-color%3D%22%23d59e3a%22/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect%20width%3D%22320%22%20height%3D%22180%22%20rx%3D%2224%22%20fill%3D%22url(%23bg)%22/%3E%3Cpath%20d%3D%22M160%2034%20L180%2070%20L224%2080%20L190%20110%20L210%20152%20L160%20130%20L110%20152%20L130%20110%20L96%2080%20L140%2070%20Z%22%20fill%3D%22url(%23gold)%22%20stroke%3D%22%23f9e2a7%22%20stroke-width%3D%226%22/%3E%3Cpath%20d%3D%22M160%20110%20L160%20166%22%20stroke%3D%22%23f9e2a7%22%20stroke-width%3D%2212%22%20stroke-linecap%3D%22round%22/%3E%3Cpath%20d%3D%22M152%20166%20L152%20180%20L168%20180%20L168%20166%22%20fill%3D%22%23f9e2a7%22/%3E%3Ctext%20x%3D%22160%22%20y%3D%22170%22%20font-family%3D%22Inter%2CArial%2Csans-serif%22%20font-size%3D%2218%22%20fill%3D%22%23e2f5ff%22%20text-anchor%3D%22middle%22%3EWARHAMMER%3C/text%3E%3C/svg%3E" />
   </div>
@@ -380,7 +380,7 @@
       fightRunning = true;
       player = { x: 140, y: 220, health: 120, action: 'idle', timer: 0, name: 'Roboute Guilliman' };
       enemy = { x: 460, y: 220, health: 120, action: 'idle', timer: 0, cooldown: 30, isBoss: false, name: 'Chaos Champion' };
-      fightMessage = 'Roboute Guilliman charges into battle!';
+      fightMessage = 'Lord Guilliman descends with legendary fury!';
       document.getElementById('fightStatus').textContent = fightMessage;
       fightLoop();
     }
@@ -390,7 +390,7 @@
       fightRunning = true;
       player = { x: 140, y: 220, health: 120, action: 'idle', timer: 0, name: 'Roboute Guilliman' };
       enemy = { x: 470, y: 220, health: 220, action: 'idle', timer: 0, cooldown: 20, isBoss: true, name: 'Chaos Overlord' };
-      fightMessage = 'Chaos Overlord rises to challenge Guilliman!';
+      fightMessage = 'Chaos Overlord erupts with ruinous might!';
       document.getElementById('fightStatus').textContent = fightMessage;
       fightLoop();
     }
@@ -491,21 +491,31 @@
       ctx.save();
       const x = actor.x;
       const y = actor.y;
-      const armorFront = actor.isBoss ? '#4b1f2d' : '#1d4d94';
-      const armorSide = actor.isBoss ? '#6d3f58' : '#3f7dc6';
-      const trim = actor.isBoss ? '#d8b35c' : '#ffeb7e';
-      const visor = actor.isBoss ? '#121217' : '#0f233a';
+      const armorFront = actor.isBoss ? '#3d1d2a' : '#1d4d94';
+      const armorSide = actor.isBoss ? '#5b2d47' : '#3f7dc6';
+      const armorPanel = actor.isBoss ? '#7f4b64' : '#5d8fd0';
+      const trim = actor.isBoss ? '#d78f4e' : '#ffeb80';
+      const visor = actor.isBoss ? '#190e12' : '#0f233a';
       const metal = '#b3bac3';
-      const accent = actor.isBoss ? '#ff8c60' : '#8deafc';
+      const accent = actor.isBoss ? '#ff4d4d' : '#8deafc';
+      const glow = actor.isBoss ? 'rgba(255, 100, 100, 0.28)' : 'rgba(110, 230, 255, 0.24)';
 
       ctx.lineWidth = 2;
-      ctx.strokeStyle = trim;
+      ctx.strokeStyle = 'rgba(0,0,0,0.24)';
+
+      // Glow aura
+      ctx.save();
+      ctx.globalAlpha = 0.16;
+      ctx.fillStyle = glow;
+      ctx.beginPath();
+      ctx.ellipse(x, y - 18, 70, 40, 0, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.restore();
 
       // Legs
       ctx.fillStyle = armorFront;
       ctx.fillRect(x - 24, y + 24, 22, 44);
       ctx.fillRect(x + 2, y + 24, 22, 44);
-
       ctx.fillStyle = armorSide;
       ctx.beginPath();
       ctx.moveTo(x - 2, y + 24);
@@ -521,8 +531,6 @@
       ctx.lineTo(x + 24, y + 68);
       ctx.closePath();
       ctx.fill();
-
-      ctx.strokeStyle = 'rgba(0,0,0,0.24)';
       ctx.strokeRect(x - 24, y + 24, 22, 44);
       ctx.strokeRect(x + 2, y + 24, 22, 44);
 
@@ -534,7 +542,6 @@
       // Torso
       ctx.fillStyle = armorFront;
       ctx.fillRect(x - 34, y - 24, 68, 64);
-
       ctx.fillStyle = armorSide;
       ctx.beginPath();
       ctx.moveTo(x + 34, y - 24);
@@ -550,12 +557,10 @@
       ctx.lineTo(x - 34, y + 40);
       ctx.closePath();
       ctx.fill();
-
-      ctx.strokeStyle = 'rgba(0,0,0,0.24)';
       ctx.strokeRect(x - 34, y - 24, 68, 64);
 
       // Chest plating
-      ctx.fillStyle = 'rgba(255,255,255,0.15)';
+      ctx.fillStyle = 'rgba(255,255,255,0.16)';
       ctx.fillRect(x - 34, y - 24, 68, 14);
       ctx.fillStyle = trim;
       ctx.fillRect(x - 18, y - 10, 14, 24);
@@ -564,6 +569,17 @@
       ctx.fillStyle = accent;
       ctx.fillRect(x - 12, y - 6, 6, 8);
       ctx.fillRect(x + 6, y - 6, 6, 8);
+
+      // Core crystal
+      ctx.fillStyle = actor.isBoss ? '#ff7260' : '#7ef4ff';
+      ctx.beginPath();
+      ctx.moveTo(x, y); 
+      ctx.lineTo(x - 8, y + 14);
+      ctx.lineTo(x + 8, y + 14);
+      ctx.closePath();
+      ctx.fill();
+      ctx.strokeStyle = trim;
+      ctx.stroke();
 
       // Aquila badge
       ctx.fillStyle = trim;
@@ -603,6 +619,35 @@
       ctx.closePath();
       ctx.fill();
 
+      if (actor.isBoss) {
+        ctx.fillStyle = '#bc3b4e';
+        ctx.beginPath();
+        ctx.moveTo(x - 60, y - 20);
+        ctx.lineTo(x - 78, y - 46);
+        ctx.lineTo(x - 66, y - 34);
+        ctx.closePath();
+        ctx.fill();
+        ctx.beginPath();
+        ctx.moveTo(x + 60, y - 20);
+        ctx.lineTo(x + 78, y - 46);
+        ctx.lineTo(x + 66, y - 34);
+        ctx.closePath();
+        ctx.fill();
+        ctx.fillStyle = '#ff9f8d';
+        ctx.beginPath();
+        ctx.moveTo(x - 46, y - 44);
+        ctx.lineTo(x - 38, y - 62);
+        ctx.lineTo(x - 30, y - 44);
+        ctx.closePath();
+        ctx.fill();
+        ctx.beginPath();
+        ctx.moveTo(x + 46, y - 44);
+        ctx.lineTo(x + 38, y - 62);
+        ctx.lineTo(x + 30, y - 44);
+        ctx.closePath();
+        ctx.fill();
+      }
+
       // Upper arms
       ctx.fillStyle = armorFront;
       ctx.fillRect(x - 56, y - 12, 20, 44);
@@ -622,7 +667,6 @@
       ctx.lineTo(x + 56, y + 28);
       ctx.closePath();
       ctx.fill();
-      ctx.strokeStyle = 'rgba(0,0,0,0.24)';
       ctx.strokeRect(x - 56, y - 12, 20, 44);
       ctx.strokeRect(x + 36, y - 12, 20, 44);
 
@@ -690,6 +734,16 @@
       ctx.fillStyle = actor.isBoss ? '#ff7a56' : '#8bf4ff';
       ctx.fillRect(x - 8, y - 64, 16, 8);
 
+      if (actor.isBoss) {
+        ctx.fillStyle = '#d37a4f';
+        ctx.beginPath();
+        ctx.moveTo(x - 10, y - 86);
+        ctx.lineTo(x, y - 98);
+        ctx.lineTo(x + 10, y - 86);
+        ctx.closePath();
+        ctx.fill();
+      }
+
       ctx.fillStyle = trim;
       ctx.fillRect(x - 4, y - 88, 8, 24);
       ctx.fillRect(x - 12, y - 84, 24, 8);
@@ -699,48 +753,64 @@
 
     function drawFight() {
       const arena = fightCtx.createLinearGradient(0, 0, 0, fightCanvas.height);
-      arena.addColorStop(0, '#061725');
-      arena.addColorStop(0.35, '#05121d');
-      arena.addColorStop(0.7, '#020913');
-      arena.addColorStop(1, '#010409');
+      arena.addColorStop(0, '#08192d');
+      arena.addColorStop(0.3, '#07122a');
+      arena.addColorStop(0.7, '#030815');
+      arena.addColorStop(1, '#010308');
       fightCtx.fillStyle = arena;
       fightCtx.fillRect(0, 0, fightCanvas.width, fightCanvas.height);
 
       fightCtx.save();
-      fightCtx.globalAlpha = 0.12;
-      fightCtx.strokeStyle = '#70e8ff';
+      fightCtx.globalAlpha = 0.15;
+      fightCtx.fillStyle = 'rgba(54, 172, 255, 0.22)';
+      fightCtx.beginPath();
+      fightCtx.ellipse(160, 120, 140, 60, 0, 0, Math.PI * 2);
+      fightCtx.fill();
+      fightCtx.fillStyle = 'rgba(255, 120, 80, 0.22)';
+      fightCtx.beginPath();
+      fightCtx.ellipse(460, 100, 120, 50, 0, 0, Math.PI * 2);
+      fightCtx.fill();
+      fightCtx.restore();
+
+      fightCtx.save();
+      fightCtx.globalAlpha = 0.2;
+      fightCtx.strokeStyle = 'rgba(255,255,255,0.08)';
       fightCtx.lineWidth = 1;
-      for (let i = 0; i <= 12; i++) {
-        const px = i * (fightCanvas.width / 12);
+      for (let i = 0; i <= 14; i++) {
+        const px = i * (fightCanvas.width / 14);
         fightCtx.beginPath();
         fightCtx.moveTo(px, 248);
-        fightCtx.lineTo(160, fightCanvas.height);
+        fightCtx.lineTo(160 + (px - 160) * 0.5, fightCanvas.height);
         fightCtx.stroke();
       }
-      for (let j = 0; j <= 8; j++) {
-        const y = 248 + j * 8;
+      for (let j = 0; j <= 6; j++) {
+        const yy = 248 + j * 10;
         fightCtx.beginPath();
-        fightCtx.moveTo(0, y);
-        fightCtx.lineTo(fightCanvas.width, 248 + (y - 248) * 0.4);
+        fightCtx.moveTo(0, yy);
+        fightCtx.lineTo(fightCanvas.width, yy + 8);
         fightCtx.stroke();
       }
       fightCtx.restore();
 
-      fightCtx.fillStyle = 'rgba(255, 255, 255, 0.08)';
+      fightCtx.save();
+      fightCtx.globalCompositeOperation = 'screen';
+      fightCtx.fillStyle = 'rgba(255,255,255,0.06)';
       fightCtx.beginPath();
-      fightCtx.arc(160, 80, 100, 0, Math.PI * 2);
+      fightCtx.arc(160, 70, 90, 0, Math.PI * 2);
       fightCtx.fill();
       fightCtx.beginPath();
-      fightCtx.arc(460, 60, 80, 0, Math.PI * 2);
+      fightCtx.arc(460, 60, 70, 0, Math.PI * 2);
       fightCtx.fill();
-      fightCtx.fillStyle = '#0e2e44';
+      fightCtx.restore();
+
+      fightCtx.fillStyle = '#081b2d';
       fightCtx.fillRect(0, 248, fightCanvas.width, 52);
-      fightCtx.strokeStyle = 'rgba(112, 232, 255, 0.16)';
+      fightCtx.strokeStyle = 'rgba(255, 236, 132, 0.18)';
       fightCtx.lineWidth = 1;
       for (let i = 0; i <= 10; i++) {
         fightCtx.beginPath();
         fightCtx.moveTo(i * 60, 248);
-        fightCtx.lineTo(fightCanvas.width / 2 + (i - 5) * 12, fightCanvas.height);
+        fightCtx.lineTo(fightCanvas.width / 2 + (i - 5) * 14, fightCanvas.height);
         fightCtx.stroke();
       }
       fightCtx.fillStyle = '#0f8';
@@ -748,7 +818,7 @@
       fightCtx.strokeStyle = '#8ef';
       fightCtx.lineWidth = 2;
       fightCtx.strokeRect(20, 30, 160, 14);
-      fightCtx.fillStyle = enemy.isBoss ? '#ff8800' : '#f55';
+      fightCtx.fillStyle = enemy.isBoss ? '#ffb14d' : '#f55';
       fightCtx.fillRect(420, 30, enemy.health * 1.6, 14);
       fightCtx.strokeStyle = enemy.isBoss ? '#ffc587' : '#f9a';
       fightCtx.strokeRect(420, 30, 160, 14);
