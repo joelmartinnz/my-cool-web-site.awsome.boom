@@ -72,6 +72,18 @@
       background: rgba(2, 10, 24, 0.22);
       backdrop-filter: blur(8px);
     }
+    .warhammer-banner {
+      margin: 18px 0 10px;
+      display: flex;
+      justify-content: center;
+    }
+    .warhammer-banner svg {
+      width: 100%;
+      max-width: 420px;
+      border-radius: 22px;
+      box-shadow: 0 28px 90px rgba(0, 0, 0, 0.35);
+      background: rgba(0, 0, 0, 0.22);
+    }
     #flappyCanvas {
       border: 2px solid rgba(134, 255, 255, 0.35);
       box-shadow: 0 0 30px rgba(0, 255, 255, 0.14);
@@ -174,6 +186,29 @@
   <div class="game-card">
     <h2>Warhammer: Guilliman's Wrath</h2>
   <p>Use A/D to move, W to strike with your blade, S to charge the enemy. Deploy Lord Guilliman and fight the Chaos Overlord.</p>
+  <div class="warhammer-banner">
+    <svg viewBox="0 0 320 180" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0%" stop-color="#07203a"/>
+          <stop offset="100%" stop-color="#0d3a60"/>
+        </linearGradient>
+        <linearGradient id="gold" x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0%" stop-color="#ffe08a"/>
+          <stop offset="100%" stop-color="#d59e3a"/>
+        </linearGradient>
+      </defs>
+      <rect width="320" height="180" rx="24" fill="url(#bg)"/>
+      <path d="M160 30 L190 60 L205 58 L180 90 L210 110 L176 112 L170 150 L150 132 L130 150 L124 112 L90 110 L120 90 L95 58 L110 60 Z" fill="url(#gold)" stroke="#f9e2a7" stroke-width="6"/>
+      <path d="M160 90 L160 150" stroke="#f9e2a7" stroke-width="12" stroke-linecap="round"/>
+      <path d="M152 150 L152 176 L168 176 L168 150" fill="#f9e2a7"/>
+      <path d="M130 72 L124 78 L118 72 L130 60 Z" fill="#f9e2a7"/>
+      <path d="M190 72 L196 78 L202 72 L190 60 Z" fill="#f9e2a7"/>
+      <circle cx="160" cy="78" r="10" fill="#0b1f34" stroke="#f9e2a7" stroke-width="4"/>
+      <path d="M80 160 C90 140 110 120 160 120 C210 120 230 140 240 160" fill="none" stroke="#7bc1ff" stroke-width="16"/>
+      <text x="160" y="170" font-family="Inter, Arial, sans-serif" font-size="20" fill="#e2f5ff" text-anchor="middle">WARHAMMER</text>
+    </svg>
+  </div>
   <button id="startFightBtn" onclick="startFight()">Deploy Guilliman</button>
   <button id="startBossBtn" onclick="startBossFight()">Summon Chaos Overlord</button>
   <canvas id="warhammerCanvas" width="600" height="300" style="display: block; margin-top: 10px;"></canvas>
