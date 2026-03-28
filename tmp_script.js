@@ -1,0 +1,334 @@
+
+    let randomNumber = Math.floor(Math.random() * 100) + 1;
+    let attempts = 0;
+    
+    function checkGuess() {
+      const guess = parseInt(document.getElementById('guess').value);
+      attempts++;
+      
+      if (isNaN(guess) || guess < 1 || guess > 100) {
+        document.getElementById('result').textContent = 'Please enter a number between 1 and 100.';
+        return;
+      }
+      
+      if (guess === randomNumber) {
+        document.getElementById('result').textContent = `Congratulations! You guessed it in ${attempts} attempts.`;
+        randomNumber = Math.floor(Math.random() * 100) + 1;
+        attempts = 0;
+      } else if (guess < randomNumber) {
+        document.getElementById('result').textContent = 'Too low! Try again.';
+      } else {
+        document.getElementById('result').textContent = 'Too high! Try again.';
+      }
+    }
+    
+    const questions = [
+      { q: "Is it a mammal?", yes: 1, no: 2 },
+      { q: "Does it bark?", yes: "dog", no: "cat" },
+      { q: "Does it fly?", yes: "bird", no: "fish" }
+    ];
+    
+    let currentQuestion = 0;
+    
+    function startYesNoGame() {
+      document.getElementById('startGame').style.display = 'none';
+      document.getElementById('gameArea').style.display = 'block';
+      currentQuestion = 0;
+      document.getElementById('question').textContent = questions[currentQuestion].q;
+      document.getElementById('gameResult').textContent = '';
+    }
+    
+    function answerYes() {
+      const next = questions[currentQuestion].yes;
+      if (typeof next === 'string') {
+        document.getElementById('gameResult').textContent = `I guess it's a ${next}!`;
+        document.getElementById('gameArea').style.display = 'none';
+        document.getElementById('startGame').style.display = 'block';
+      } else {
+        currentQuestion = next;
+        document.getElementById('question').textContent = questions[currentQuestion].q;
+      }
+    }
+    
+    function answerNo() {
+      const next = questions[currentQuestion].no;
+      if (typeof next === 'string') {
+        document.getElementById('gameResult').textContent = `I guess it's a ${next}!`;
+        document.getElementById('gameArea').style.display = 'none';
+        document.getElementById('startGame').style.display = 'block';
+      } else {
+        currentQuestion = next;
+        document.getElementById('question').textContent = questions[currentQuestion].q;
+      }
+    }
+    
+    // Flappy Bird Game
+    const canvas = document.getElementById('flappyCanvas');
+    const ctx = canvas.getContext('2d');
+    let bird = { x: 50, y: 300, velocity: 0 };
+    const gravity = 0.6;
+    const jump = -12;
+    let pipes = [];
+    let score = 0;
+    let gameRunning = true;
+    
+    function drawBird() {
+      ctx.fillStyle = 'yellow';
+      ctx.fillRect(bird.x, bird.y, 20, 20);
+    }
+    
+    function drawPipes() {
+      ctx.fillStyle = 'green';
+      pipes.forEach(pipe => {
+        ctx.fillRect(pipe.x, 0, 50, pipe.top);
+        ctx.fillRect(pipe.x, canvas.height - pipe.bottom, 50, pipe.bottom);
+      });
+    }
+    
+    function update() {
+      if (!gameRunning) return;
+      
+      bird.velocity += gravity;
+      bird.y += bird.velocity;
+      
+      if (bird.y + 20 > canvas.height || bird.y < 0) {
+        gameOver();
+      }
+      
+      pipes.forEach(pipe => {
+        pipe.x -= 2;
+        if (pipe.x + 50 < 0) {
+          pipes.shift();
+          score++;
+          document.getElementById('flappyScore').textContent = `Score: ${score}`;
+        }
+        if (bird.x < pipe.x + 50 && bird.x + 20 > pipe.x &&
+            (bird.y < pipe.top || bird.y + 20 > canvas.height - pipe.bottom)) {
+          gameOver();
+        }
+      });
+      
+      if (pipes.length === 0 || pipes[pipes.length - 1].x < 300) {
+        const top = Math.random() * (canvas.height - 200) + 50;
+        const bottom = canvas.height - top - 150;
+        pipes.push({ x: canvas.width, top, bottom });
+      }
+    }
+    
+    function draw() {
+      ctx.fillStyle = 'skyblue';
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+      drawBird();
+      drawPipes();
+    }
+    
+    function gameLoop() {
+      update();
+      draw();
+      if (gameRunning) {
+        requestAnimationFrame(gameLoop);
+      }
+    }
+    
+    function flap() {
+      if (!gameRunning) {
+        resetGame();
+        return;
+      }
+      bird.velocity = jump;
+    }
+    
+    function gameOver() {
+      gameRunning = false;
+      ctx.fillStyle = 'red';
+      ctx.font = '30px Arial';
+      ctx.fillText('Game Over', canvas.width / 2 - 80, canvas.height / 2);
+      ctx.fillText('Click to restart', canvas.width / 2 - 100, canvas.height / 2 + 40);
+    }
+    
+    function resetGame() {
+      bird = { x: 50, y: 300, velocity: 0 };
+      pipes = [];
+      score = 0;
+      document.getElementById('flappyScore').textContent = `Score: ${score}`;
+      gameRunning = true;
+      gameLoop();
+    }
+    
+    canvas.addEventListener('click', flap);
+    document.addEventListener('keydown', (e) => {
+      if (e.code === 'Space') {
+        e.preventDefault();
+        flap();
+      }
+    });
+    
+    // Stickman Fighting Game
+    const fightCanvas = document.getElementById('stickmanCanvas');
+    const fightCtx = fightCanvas.getContext('2d');
+    let fightRunning = false;
+    let player = { x: 140, y: 220, health: 100, action: 'idle', actionTimer: 0 };
+    let enemy = { x: 460, y: 220, health: 100, action: 'idle', actionTimer: 0, cooldown: 30 };
+    let fightMessage = 'Press Start to fight.';
+    const fightKeys = { a: false, d: false };
+    
+    function startFight() {
+      fightRunning = true;
+      player = { x: 140, y: 220, health: 100, action: 'idle', actionTimer: 0 };
+      enemy = { x: 460, y: 220, health: 100, action: 'idle', actionTimer: 0, cooldown: 30 };
+      fightMessage = 'Fight!';
+      document.getElementById('fightStatus').textContent = fightMessage;
+      fightLoop();
+    }
+    
+    function setPlayerAction(action) {
+      if (!fightRunning || player.action !== 'idle') return;
+      player.action = action;
+      player.actionTimer = action === 'kick' ? 22 : 16;
+    }
+    
+    function applyHit(attacker, defender, action) {
+      const distance = Math.abs(attacker.x - defender.x);
+      if (distance <= 120) {
+        const damage = action === 'kick' ? 18 : 12;
+        defender.health = Math.max(0, defender.health - damage);
+        fightMessage = `${attacker === player ? 'Player' : 'Enemy'} ${action}s and deals ${damage}!`;
+      } else {
+        fightMessage = `${attacker === player ? 'Player' : 'Enemy'} ${action}s and misses.`;
+      }
+    }
+    
+    function updateFight() {
+      if (!fightRunning) return;
+      if (fightKeys.a) player.x -= 4;
+      if (fightKeys.d) player.x += 4;
+      player.x = Math.max(80, Math.min(320, player.x));
+      
+      if (player.action !== 'idle') {
+        player.actionTimer -= 1;
+        if (player.actionTimer <= 0) {
+          applyHit(player, enemy, player.action);
+          player.action = 'idle';
+        }
+      }
+      
+      if (enemy.cooldown > 0) {
+        enemy.cooldown -= 1;
+      } else if (enemy.action === 'idle') {
+        const distance = Math.abs(player.x - enemy.x);
+        if (distance > 150) {
+          enemy.action = 'move';
+          enemy.actionTimer = 40;
+        } else {
+          enemy.action = Math.random() < 0.6 ? 'punch' : 'kick';
+          enemy.actionTimer = enemy.action === 'kick' ? 22 : 16;
+        }
+      }
+      
+      if (enemy.action === 'move') {
+        enemy.x += player.x < enemy.x ? -3 : 3;
+        enemy.x = Math.max(340, Math.min(520, enemy.x));
+        enemy.actionTimer -= 1;
+        if (enemy.actionTimer <= 0) {
+          enemy.action = 'idle';
+          enemy.cooldown = 15;
+        }
+      } else if (enemy.action !== 'idle') {
+        enemy.actionTimer -= 1;
+        if (enemy.actionTimer <= 0) {
+          applyHit(enemy, player, enemy.action);
+          enemy.action = 'idle';
+          enemy.cooldown = 30;
+        }
+      }
+      
+      if (player.health <= 0 || enemy.health <= 0) {
+        fightRunning = false;
+        fightMessage = player.health <= 0 ? 'Enemy wins! Click Start to fight again.' : 'Player wins! Click Start to fight again.';
+      }
+      
+      document.getElementById('fightStatus').textContent = fightMessage;
+    }
+    
+    function drawStickman(ctx, actor, color) {
+      ctx.fillStyle = color;
+      ctx.strokeStyle = color;
+      ctx.lineWidth = 5;
+      ctx.beginPath();
+      ctx.arc(actor.x, actor.y - 45, 14, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.beginPath();
+      ctx.moveTo(actor.x, actor.y - 30);
+      ctx.lineTo(actor.x, actor.y + 18);
+      ctx.lineTo(actor.x - 12, actor.y + 38);
+      ctx.moveTo(actor.x, actor.y + 18);
+      ctx.lineTo(actor.x + 12, actor.y + 38);
+      ctx.moveTo(actor.x, actor.y - 20);
+      ctx.lineTo(actor.x - 22, actor.y - 10);
+      ctx.moveTo(actor.x, actor.y - 20);
+      if (actor.action === 'punch') {
+        ctx.lineTo(actor.x + (actor === player ? 34 : -34), actor.y - 20);
+      } else {
+        ctx.lineTo(actor.x + (actor === player ? 22 : -22), actor.y - 10);
+      }
+      ctx.stroke();
+      if (actor.action === 'kick') {
+        ctx.beginPath();
+        ctx.moveTo(actor.x, actor.y + 16);
+        ctx.lineTo(actor.x + (actor === player ? 28 : -28), actor.y + 35);
+        ctx.stroke();
+      }
+      ctx.fillStyle = '#000';
+      ctx.fillRect(actor.x - 6, actor.y - 52, 3, 3);
+      ctx.fillRect(actor.x + 3, actor.y - 52, 3, 3);
+    }
+    
+    function drawFight() {
+      fightCtx.fillStyle = '#111';
+      fightCtx.fillRect(0, 0, fightCanvas.width, fightCanvas.height);
+      fightCtx.fillStyle = '#223';
+      fightCtx.fillRect(0, 240, fightCanvas.width, 60);
+      fightCtx.fillStyle = '#0f0';
+      fightCtx.fillRect(20, 30, player.health * 1.6, 12);
+      fightCtx.strokeStyle = '#fff';
+      fightCtx.strokeRect(20, 30, 160, 12);
+      fightCtx.fillStyle = '#f55';
+      fightCtx.fillRect(420, 30, enemy.health * 1.6, 12);
+      fightCtx.strokeStyle = '#fff';
+      fightCtx.strokeRect(420, 30, 160, 12);
+      fightCtx.fillStyle = '#fff';
+      fightCtx.font = '16px Arial';
+      fightCtx.fillText('Player HP', 20, 22);
+      fightCtx.fillText('Enemy HP', 420, 22);
+      drawStickman(fightCtx, player, '#fafafa');
+      drawStickman(fightCtx, enemy, '#4af');
+      if (!fightRunning) {
+        fightCtx.fillStyle = '#ff0';
+        fightCtx.font = '18px Arial';
+        fightCtx.fillText('Press Start to fight', 220, 150);
+      }
+    }
+    
+    function fightLoop() {
+      updateFight();
+      drawFight();
+      if (fightRunning) {
+        requestAnimationFrame(fightLoop);
+      }
+    }
+    
+    document.addEventListener('keydown', (e) => {
+      if (e.key.toLowerCase() === 'a') fightKeys.a = true;
+      if (e.key.toLowerCase() === 'd') fightKeys.d = true;
+      if (fightRunning && e.key.toLowerCase() === 'w') setPlayerAction('punch');
+      if (fightRunning && e.key.toLowerCase() === 's') setPlayerAction('kick');
+    });
+    
+    document.addEventListener('keyup', (e) => {
+      if (e.key.toLowerCase() === 'a') fightKeys.a = false;
+      if (e.key.toLowerCase() === 'd') fightKeys.d = false;
+    });
+    
+    drawFight();
+    gameLoop();
+  
