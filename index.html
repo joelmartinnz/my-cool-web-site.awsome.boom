@@ -491,39 +491,55 @@
       ctx.save();
       const x = actor.x;
       const y = actor.y;
-      const armorBase = actor.isBoss ? '#4a1f2f' : '#1d4a8c';
-      const armorPanel = actor.isBoss ? '#7d3f55' : '#3f7cc2';
-      const trim = actor.isBoss ? '#d8b15a' : '#ffdd7f';
-      const visor = actor.isBoss ? '#120f16' : '#0e2036';
-      const metal = '#adb4bb';
-      const shoulderGlow = actor.isBoss ? 'rgba(255, 120, 80, 0.4)' : 'rgba(120, 220, 255, 0.35)';
+      const armorBase = actor.isBoss ? '#3d1f2e' : '#1d4a8e';
+      const armorPanel = actor.isBoss ? '#7c3f56' : '#3d7cc1';
+      const trim = actor.isBoss ? '#d5ab5b' : '#ffeb80';
+      const visor = actor.isBoss ? '#121217' : '#0f233a';
+      const glow = actor.isBoss ? 'rgba(255,120,88,0.26)' : 'rgba(140,240,255,0.2)';
+      const metal = '#a9b1b9';
 
       ctx.lineWidth = 3;
       ctx.strokeStyle = trim;
 
       // Legs
-      ctx.fillStyle = armorBase;
-      ctx.fillRect(x - 24, y + 24, 22, 44);
-      ctx.fillRect(x + 2, y + 24, 22, 44);
-      ctx.strokeRect(x - 24, y + 24, 22, 44);
-      ctx.strokeRect(x + 2, y + 24, 22, 44);
+      const leftLeg = { x: x - 24, y: y + 24, w: 22, h: 44 };
+      const rightLeg = { x: x + 2, y: y + 24, w: 22, h: 44 };
+      const legGrad = ctx.createLinearGradient(leftLeg.x, leftLeg.y, leftLeg.x + leftLeg.w, leftLeg.y + leftLeg.h);
+      legGrad.addColorStop(0, armorBase);
+      legGrad.addColorStop(1, armorPanel);
+      ctx.fillStyle = legGrad;
+      ctx.fillRect(leftLeg.x, leftLeg.y, leftLeg.w, leftLeg.h);
+      ctx.fillRect(rightLeg.x, rightLeg.y, rightLeg.w, rightLeg.h);
+      ctx.strokeRect(leftLeg.x, leftLeg.y, leftLeg.w, leftLeg.h);
+      ctx.strokeRect(rightLeg.x, rightLeg.y, rightLeg.w, rightLeg.h);
 
       // Boots
       ctx.fillStyle = '#11171d';
-      ctx.fillRect(x - 28, y + 62, 30, 14);
-      ctx.fillRect(x + 0, y + 62, 30, 14);
-      ctx.strokeRect(x - 28, y + 62, 30, 14);
-      ctx.strokeRect(x + 0, y + 62, 30, 14);
+      ctx.fillRect(leftLeg.x - 4, leftLeg.y + leftLeg.h - 2, 30, 14);
+      ctx.fillRect(rightLeg.x, rightLeg.y + rightLeg.h - 2, 30, 14);
+      ctx.strokeRect(leftLeg.x - 4, leftLeg.y + leftLeg.h - 2, 30, 14);
+      ctx.strokeRect(rightLeg.x, rightLeg.y + rightLeg.h - 2, 30, 14);
 
       // Torso
-      ctx.fillStyle = armorBase;
-      ctx.fillRect(x - 34, y - 24, 68, 64);
-      ctx.strokeRect(x - 34, y - 24, 68, 64);
+      const torso = { x: x - 34, y: y - 24, w: 68, h: 64 };
+      const chestGrad = ctx.createLinearGradient(torso.x, torso.y, torso.x + torso.w, torso.y + torso.h);
+      chestGrad.addColorStop(0, armorBase);
+      chestGrad.addColorStop(0.5, armorPanel);
+      chestGrad.addColorStop(1, armorBase);
+      ctx.fillStyle = chestGrad;
+      ctx.fillRect(torso.x, torso.y, torso.w, torso.h);
+      ctx.strokeRect(torso.x, torso.y, torso.w, torso.h);
+      ctx.fillStyle = 'rgba(255,255,255,0.12)';
+      ctx.fillRect(torso.x, torso.y, torso.w, 14);
       ctx.fillStyle = armorPanel;
-      ctx.fillRect(x - 34, y - 24, 68, 18);
       ctx.fillRect(x - 18, y - 10, 14, 24);
       ctx.fillRect(x + 4, y - 10, 14, 24);
-      ctx.strokeRect(x - 34, y - 24, 68, 64);
+
+      // Chest plating
+      ctx.fillStyle = trim;
+      ctx.fillRect(x - 26, y - 8, 14, 6);
+      ctx.fillRect(x + 12, y - 8, 14, 6);
+      ctx.fillRect(x - 6, y + 18, 12, 28);
 
       // Aquila badge
       ctx.fillStyle = trim;
@@ -550,8 +566,7 @@
       ctx.fill();
       ctx.stroke();
 
-      // Shoulder glow
-      ctx.fillStyle = shoulderGlow;
+      ctx.fillStyle = glow;
       ctx.beginPath();
       ctx.arc(x - 46, y - 18, 28, 0, Math.PI * 2);
       ctx.fill();
@@ -585,16 +600,30 @@
       // Weapon
       if (!actor.isBoss) {
         ctx.fillStyle = metal;
-        ctx.fillRect(rightHandX + 18, y + 4, 30, 10);
-        ctx.fillRect(rightHandX + 28, y - 12, 10, 28);
-        ctx.fillStyle = '#d9d9d9';
-        ctx.fillRect(rightHandX + 30, y - 10, 6, 24);
+        ctx.beginPath();
+        ctx.moveTo(rightHandX + 18, y + 4);
+        ctx.lineTo(rightHandX + 56, y + 4);
+        ctx.lineTo(rightHandX + 56, y + 16);
+        ctx.lineTo(rightHandX + 18, y + 16);
+        ctx.closePath();
+        ctx.fill();
+        ctx.stroke();
+        ctx.fillStyle = '#7c8790';
+        ctx.fillRect(rightHandX + 42, y - 16, 10, 28);
+        ctx.strokeRect(rightHandX + 42, y - 16, 10, 28);
       } else {
         ctx.fillStyle = trim;
-        ctx.fillRect(rightHandX + 14, y - 6, 34, 16);
-        ctx.strokeRect(rightHandX + 14, y - 6, 34, 16);
-        ctx.fillRect(rightHandX + 30, y - 26, 10, 24);
-        ctx.strokeRect(rightHandX + 30, y - 26, 10, 24);
+        ctx.beginPath();
+        ctx.moveTo(rightHandX + 14, y - 6);
+        ctx.lineTo(rightHandX + 48, y - 6);
+        ctx.lineTo(rightHandX + 48, y + 10);
+        ctx.lineTo(rightHandX + 14, y + 10);
+        ctx.closePath();
+        ctx.fill();
+        ctx.stroke();
+        ctx.fillStyle = '#d6c18b';
+        ctx.fillRect(rightHandX + 34, y - 28, 12, 24);
+        ctx.strokeRect(rightHandX + 34, y - 28, 12, 24);
       }
 
       // Helmet
@@ -607,12 +636,8 @@
       ctx.fillRect(x - 16, y - 68, 32, 18);
       ctx.strokeStyle = trim;
       ctx.strokeRect(x - 16, y - 68, 32, 18);
-
-      // Visor glow
-      ctx.fillStyle = actor.isBoss ? '#ff6d4d' : '#8bf4ff';
+      ctx.fillStyle = actor.isBoss ? '#ff7a56' : '#8df3ff';
       ctx.fillRect(x - 8, y - 64, 16, 8);
-
-      // Helmet crest
       ctx.fillStyle = trim;
       ctx.fillRect(x - 4, y - 88, 8, 24);
       ctx.fillRect(x - 10, y - 84, 20, 8);
@@ -622,16 +647,33 @@
     
     function drawFight() {
       const arena = fightCtx.createLinearGradient(0, 0, 0, fightCanvas.height);
-      arena.addColorStop(0, '#08223a');
-      arena.addColorStop(0.35, '#05162a');
-      arena.addColorStop(0.7, '#02101f');
-      arena.addColorStop(1, '#01060d');
+      arena.addColorStop(0, '#061725');
+      arena.addColorStop(0.35, '#05121d');
+      arena.addColorStop(0.7, '#020913');
+      arena.addColorStop(1, '#010409');
       fightCtx.fillStyle = arena;
       fightCtx.fillRect(0, 0, fightCanvas.width, fightCanvas.height);
-      fightCtx.fillStyle = 'rgba(144, 255, 255, 0.06)';
-      for (let x = 0; x < fightCanvas.width; x += 28) {
-        fightCtx.fillRect(x, 0, 2, fightCanvas.height);
+
+      fightCtx.save();
+      fightCtx.globalAlpha = 0.12;
+      fightCtx.strokeStyle = '#70e8ff';
+      fightCtx.lineWidth = 1;
+      for (let i = 0; i <= 12; i++) {
+        const px = i * (fightCanvas.width / 12);
+        fightCtx.beginPath();
+        fightCtx.moveTo(px, 248);
+        fightCtx.lineTo(160, fightCanvas.height);
+        fightCtx.stroke();
       }
+      for (let j = 0; j <= 8; j++) {
+        const y = 248 + j * 8;
+        fightCtx.beginPath();
+        fightCtx.moveTo(0, y);
+        fightCtx.lineTo(fightCanvas.width, 248 + (y - 248) * 0.4);
+        fightCtx.stroke();
+      }
+      fightCtx.restore();
+
       fightCtx.fillStyle = 'rgba(255, 255, 255, 0.08)';
       fightCtx.beginPath();
       fightCtx.arc(160, 80, 100, 0, Math.PI * 2);
@@ -639,8 +681,16 @@
       fightCtx.beginPath();
       fightCtx.arc(460, 60, 80, 0, Math.PI * 2);
       fightCtx.fill();
-      fightCtx.fillStyle = '#0e3a55';
+      fightCtx.fillStyle = '#0e2e44';
       fightCtx.fillRect(0, 248, fightCanvas.width, 52);
+      fightCtx.strokeStyle = 'rgba(112, 232, 255, 0.16)';
+      fightCtx.lineWidth = 1;
+      for (let i = 0; i <= 10; i++) {
+        fightCtx.beginPath();
+        fightCtx.moveTo(i * 60, 248);
+        fightCtx.lineTo(fightCanvas.width / 2 + (i - 5) * 12, fightCanvas.height);
+        fightCtx.stroke();
+      }
       fightCtx.fillStyle = '#0f8';
       fightCtx.fillRect(20, 30, player.health * 1.6, 14);
       fightCtx.strokeStyle = '#8ef';
