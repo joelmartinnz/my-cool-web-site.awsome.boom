@@ -375,7 +375,7 @@
       fightRunning = true;
       player = { x: 140, y: 220, health: 120, action: 'idle', timer: 0 };
       enemy = { x: 470, y: 220, health: 220, action: 'idle', timer: 0, cooldown: 20, isBoss: true };
-      fightMessage = 'Boss fight started!';
+      fightMessage = 'Warhammer boss unleashed!';
       document.getElementById('fightStatus').textContent = fightMessage;
       fightLoop();
     }
@@ -477,87 +477,149 @@
       const headY = actor.y - 45;
       const headGlow = ctx.createRadialGradient(headX, headY, 2, headX, headY, 18);
       headGlow.addColorStop(0, '#ffffff');
-      headGlow.addColorStop(0.25, color);
+      headGlow.addColorStop(0.22, color);
       headGlow.addColorStop(1, 'rgba(0,0,0,0)');
       ctx.fillStyle = headGlow;
       ctx.beginPath();
-      ctx.arc(headX, headY, 14, 0, Math.PI * 2);
+      ctx.arc(headX, headY, 16, 0, Math.PI * 2);
       ctx.fill();
-      ctx.strokeStyle = color;
-      ctx.lineWidth = 5;
+
+      ctx.fillStyle = actor.isBoss ? '#2e2b32' : '#091c2e';
+      ctx.strokeStyle = actor.isBoss ? '#ffb85a' : color;
+      ctx.lineWidth = actor.isBoss ? 6 : 5;
       ctx.beginPath();
-      ctx.arc(headX, headY, 14, 0, Math.PI * 2);
+      ctx.arc(headX, headY, 16, 0, Math.PI * 2);
+      ctx.fill();
       ctx.stroke();
 
       if (actor.isBoss) {
-        ctx.strokeStyle = '#ffd87f';
-        ctx.lineWidth = 4;
+        ctx.fillStyle = '#ffe7ae';
         ctx.beginPath();
-        ctx.moveTo(headX - 8, headY - 20);
-        ctx.lineTo(headX - 18, headY - 34);
-        ctx.moveTo(headX + 8, headY - 20);
-        ctx.lineTo(headX + 18, headY - 34);
+        ctx.moveTo(headX - 16, headY - 10);
+        ctx.lineTo(headX - 24, headY - 32);
+        ctx.lineTo(headX - 8, headY - 26);
+        ctx.closePath();
+        ctx.fill();
+        ctx.beginPath();
+        ctx.moveTo(headX + 16, headY - 10);
+        ctx.lineTo(headX + 24, headY - 32);
+        ctx.lineTo(headX + 8, headY - 26);
+        ctx.closePath();
+        ctx.fill();
+
+        ctx.strokeStyle = '#ffcd74';
+        ctx.lineWidth = 3;
+        ctx.beginPath();
+        ctx.moveTo(headX - 12, headY + 4);
+        ctx.lineTo(headX + 12, headY + 4);
         ctx.stroke();
         ctx.beginPath();
-        ctx.moveTo(headX - 10, headY - 42);
-        ctx.lineTo(headX, headY - 54);
-        ctx.lineTo(headX + 10, headY - 42);
-        ctx.stroke();
-        ctx.strokeStyle = '#ffa83e';
-        ctx.lineWidth = 2;
-        ctx.beginPath();
-        ctx.moveTo(headX - 12, headY - 6);
-        ctx.lineTo(headX + 12, headY - 6);
+        ctx.moveTo(headX - 6, headY - 2);
+        ctx.lineTo(headX - 6, headY + 6);
+        ctx.moveTo(headX + 6, headY - 2);
+        ctx.lineTo(headX + 6, headY + 6);
         ctx.stroke();
       } else if (isPlayer) {
-        ctx.fillStyle = 'rgba(100, 255, 255, 0.35)';
+        ctx.fillStyle = 'rgba(120, 240, 255, 0.24)';
         ctx.beginPath();
-        ctx.ellipse(headX, headY - 4, 10, 6, 0, 0, Math.PI);
+        ctx.ellipse(headX, headY - 6, 10, 5, 0, 0, Math.PI);
         ctx.fill();
       }
+
+      // Armor chest
+      ctx.fillStyle = actor.isBoss ? '#3f2d2a' : 'rgba(80, 180, 255, 0.16)';
+      ctx.strokeStyle = actor.isBoss ? '#ffb85a' : color;
+      ctx.lineWidth = actor.isBoss ? 5 : 5;
+      ctx.beginPath();
+      ctx.moveTo(actor.x - 18, actor.y - 24);
+      ctx.lineTo(actor.x + 18, actor.y - 24);
+      ctx.lineTo(actor.x + 20, actor.y + 14);
+      ctx.lineTo(actor.x - 20, actor.y + 14);
+      ctx.closePath();
+      ctx.fill();
+      ctx.stroke();
+
+      if (actor.isBoss) {
+        ctx.fillStyle = '#ffcf7d';
+        ctx.beginPath();
+        ctx.moveTo(actor.x - 8, actor.y - 18);
+        ctx.lineTo(actor.x, actor.y - 4);
+        ctx.lineTo(actor.x + 8, actor.y - 18);
+        ctx.closePath();
+        ctx.fill();
+      }
+
+      // Legs
+      ctx.strokeStyle = color;
+      ctx.lineWidth = 6;
+      ctx.beginPath();
+      ctx.moveTo(actor.x - 10, actor.y + 14);
+      ctx.lineTo(actor.x - 14, actor.y + 44);
+      ctx.moveTo(actor.x + 10, actor.y + 14);
+      ctx.lineTo(actor.x + 14, actor.y + 44);
+      ctx.stroke();
+
+      ctx.lineWidth = 5;
+      ctx.beginPath();
+      ctx.moveTo(actor.x - 12, actor.y + 14);
+      ctx.lineTo(actor.x - 6, actor.y + 14);
+      ctx.moveTo(actor.x + 12, actor.y + 14);
+      ctx.lineTo(actor.x + 6, actor.y + 14);
+      ctx.stroke();
+
+      // Arms and weapon
+      const shoulderLeft = actor.x - 22;
+      const shoulderRight = actor.x + 22;
+      const handLeft = actor.action === 'punch' ? actor.x - 34 : shoulderLeft;
+      const handRight = actor.action === 'punch' ? actor.x + 34 : shoulderRight;
 
       ctx.strokeStyle = color;
       ctx.lineWidth = 6;
       ctx.beginPath();
-      ctx.moveTo(actor.x, actor.y - 30);
-      ctx.lineTo(actor.x, actor.y + 24);
+      ctx.moveTo(actor.x, actor.y - 18);
+      ctx.lineTo(shoulderLeft, actor.y - 10);
+      ctx.moveTo(actor.x, actor.y - 18);
+      ctx.lineTo(shoulderRight, actor.y - 10);
       ctx.stroke();
 
+      ctx.beginPath();
+      ctx.moveTo(shoulderLeft, actor.y - 10);
+      ctx.lineTo(handLeft, actor.y - 10);
+      ctx.stroke();
+      ctx.beginPath();
+      ctx.moveTo(shoulderRight, actor.y - 10);
+      ctx.lineTo(handRight, actor.y - 10);
+      ctx.stroke();
+
+      // Boss hammer
       if (actor.isBoss) {
-        ctx.strokeStyle = '#ffbb55';
-        ctx.lineWidth = 5;
+        const hammerX = shoulderRight + 12;
+        const hammerY = actor.y - 16;
+        ctx.strokeStyle = '#ffb85a';
+        ctx.lineWidth = 10;
         ctx.beginPath();
-        ctx.moveTo(actor.x - 16, actor.y - 16);
-        ctx.lineTo(actor.x - 34, actor.y - 8);
-        ctx.moveTo(actor.x + 16, actor.y - 16);
-        ctx.lineTo(actor.x + 34, actor.y - 8);
+        ctx.moveTo(hammerX, hammerY - 6);
+        ctx.lineTo(hammerX, hammerY + 24);
+        ctx.stroke();
+        ctx.fillStyle = '#ffd98c';
+        ctx.fillRect(hammerX - 10, hammerY - 12, 28, 18);
+        ctx.strokeStyle = '#ffe4b6';
+        ctx.lineWidth = 3;
+        ctx.strokeRect(hammerX - 10, hammerY - 12, 28, 18);
+        ctx.strokeStyle = 'rgba(255, 214, 120, 0.9)';
+        ctx.lineWidth = 4;
+        ctx.beginPath();
+        ctx.moveTo(hammerX - 14, hammerY + 2);
+        ctx.lineTo(hammerX + 22, hammerY + 2);
         ctx.stroke();
       }
 
-      ctx.strokeStyle = color;
-      ctx.lineWidth = 5;
-      ctx.beginPath();
-      ctx.moveTo(actor.x, actor.y + 24);
-      ctx.lineTo(actor.x - 10, actor.y + 44);
-      ctx.moveTo(actor.x, actor.y + 24);
-      ctx.lineTo(actor.x + 10, actor.y + 44);
-      ctx.stroke();
-
-      ctx.beginPath();
-      ctx.moveTo(actor.x, actor.y - 20);
-      ctx.lineTo(actor.x - 22, actor.y - 10);
-      ctx.moveTo(actor.x, actor.y - 20);
-      const armBaseX = actor.x + (isPlayer ? 22 : -22);
-      const punchX = actor.x + (isPlayer ? 34 : -34);
-      ctx.lineTo(actor.action === 'punch' ? punchX : armBaseX, actor.y - 20);
-      ctx.stroke();
-
       if (actor.action === 'punch') {
         ctx.strokeStyle = actor.isBoss ? 'rgba(255,192,90,0.9)' : 'rgba(100,255,255,0.8)';
-        ctx.lineWidth = 10;
+        ctx.lineWidth = 12;
         ctx.beginPath();
-        ctx.moveTo(armBaseX, actor.y - 20);
-        ctx.lineTo(punchX, actor.y - 20);
+        ctx.moveTo(shoulderRight, actor.y - 10);
+        ctx.lineTo(handRight, actor.y - 10);
         ctx.stroke();
       }
 
@@ -572,19 +634,18 @@
       }
 
       if (actor.isBoss) {
-        ctx.fillStyle = 'rgba(255, 190, 100, 0.85)';
-        ctx.fillRect(actor.x - 56, actor.y - 28, 40, 16);
-        ctx.fillRect(actor.x - 48, actor.y - 40, 12, 40);
-        ctx.strokeStyle = '#ffdb94';
-        ctx.lineWidth = 3;
-        ctx.strokeRect(actor.x - 56, actor.y - 28, 40, 16);
-        ctx.strokeRect(actor.x - 48, actor.y - 40, 12, 40);
+        ctx.strokeStyle = '#ffb85a';
+        ctx.lineWidth = 4;
         ctx.beginPath();
-        ctx.moveTo(actor.x - 38, actor.y - 40);
-        ctx.lineTo(actor.x - 28, actor.y - 52);
-        ctx.lineTo(actor.x - 18, actor.y - 40);
-        ctx.fillStyle = '#ffebac';
-        ctx.fill();
+        ctx.moveTo(actor.x - 28, actor.y - 32);
+        ctx.lineTo(actor.x - 48, actor.y - 22);
+        ctx.lineTo(actor.x - 36, actor.y - 14);
+        ctx.stroke();
+        ctx.beginPath();
+        ctx.moveTo(actor.x + 28, actor.y - 32);
+        ctx.lineTo(actor.x + 46, actor.y - 18);
+        ctx.lineTo(actor.x + 36, actor.y - 10);
+        ctx.stroke();
       }
 
       ctx.strokeStyle = color;
