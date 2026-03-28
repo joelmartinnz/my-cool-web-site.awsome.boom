@@ -175,7 +175,7 @@
     <h2>Stickman Fighting</h2>
   <p>Use A/D to move, W to punch, S to kick. Click Start to begin the fight.</p>
   <button id="startFightBtn" onclick="startFight()">Start Fight</button>
-  <button id="startBossBtn" onclick="startBossFight()">Start Boss Fight</button>
+  <button id="startBossBtn" onclick="startBossFight()">Start Warhammer Boss</button>
   <canvas id="stickmanCanvas" width="600" height="300" style="display: block; margin-top: 10px;"></canvas>
   <p id="fightStatus">Press Start to fight.</p>
   </div>
@@ -475,9 +475,9 @@
       ctx.save();
       const headX = actor.x;
       const headY = actor.y - 45;
-      const headGlow = ctx.createRadialGradient(headX, headY, 2, headX, headY, 16);
+      const headGlow = ctx.createRadialGradient(headX, headY, 2, headX, headY, 18);
       headGlow.addColorStop(0, '#ffffff');
-      headGlow.addColorStop(0.3, color);
+      headGlow.addColorStop(0.25, color);
       headGlow.addColorStop(1, 'rgba(0,0,0,0)');
       ctx.fillStyle = headGlow;
       ctx.beginPath();
@@ -489,42 +489,61 @@
       ctx.arc(headX, headY, 14, 0, Math.PI * 2);
       ctx.stroke();
 
-      if (isPlayer) {
+      if (actor.isBoss) {
+        ctx.strokeStyle = '#ffd87f';
+        ctx.lineWidth = 4;
+        ctx.beginPath();
+        ctx.moveTo(headX - 8, headY - 20);
+        ctx.lineTo(headX - 18, headY - 34);
+        ctx.moveTo(headX + 8, headY - 20);
+        ctx.lineTo(headX + 18, headY - 34);
+        ctx.stroke();
+        ctx.beginPath();
+        ctx.moveTo(headX - 10, headY - 42);
+        ctx.lineTo(headX, headY - 54);
+        ctx.lineTo(headX + 10, headY - 42);
+        ctx.stroke();
+        ctx.strokeStyle = '#ffa83e';
+        ctx.lineWidth = 2;
+        ctx.beginPath();
+        ctx.moveTo(headX - 12, headY - 6);
+        ctx.lineTo(headX + 12, headY - 6);
+        ctx.stroke();
+      } else if (isPlayer) {
         ctx.fillStyle = 'rgba(100, 255, 255, 0.35)';
         ctx.beginPath();
         ctx.ellipse(headX, headY - 4, 10, 6, 0, 0, Math.PI);
         ctx.fill();
-      } else if (actor.isBoss) {
-        ctx.strokeStyle = '#ffdd88';
-        ctx.lineWidth = 3;
-        ctx.beginPath();
-        ctx.moveTo(headX - 10, headY - 18);
-        ctx.lineTo(headX - 20, headY - 34);
-        ctx.moveTo(headX + 10, headY - 18);
-        ctx.lineTo(headX + 20, headY - 34);
-        ctx.stroke();
       }
 
-      if (isPlayer) {
-        ctx.fillStyle = 'rgba(0, 255, 255, 0.12)';
+      ctx.strokeStyle = color;
+      ctx.lineWidth = 6;
+      ctx.beginPath();
+      ctx.moveTo(actor.x, actor.y - 30);
+      ctx.lineTo(actor.x, actor.y + 24);
+      ctx.stroke();
+
+      if (actor.isBoss) {
+        ctx.strokeStyle = '#ffbb55';
+        ctx.lineWidth = 5;
         ctx.beginPath();
-        ctx.moveTo(actor.x - 24, actor.y + 10);
-        ctx.lineTo(actor.x - 38, actor.y + 20);
-        ctx.lineTo(actor.x - 32, actor.y + 40);
-        ctx.lineTo(actor.x - 16, actor.y + 20);
-        ctx.closePath();
-        ctx.fill();
+        ctx.moveTo(actor.x - 16, actor.y - 16);
+        ctx.lineTo(actor.x - 34, actor.y - 8);
+        ctx.moveTo(actor.x + 16, actor.y - 16);
+        ctx.lineTo(actor.x + 34, actor.y - 8);
+        ctx.stroke();
       }
 
       ctx.strokeStyle = color;
       ctx.lineWidth = 5;
       ctx.beginPath();
-      ctx.moveTo(actor.x, actor.y - 30);
-      ctx.lineTo(actor.x, actor.y + 18);
-      ctx.moveTo(actor.x, actor.y + 18);
-      ctx.lineTo(actor.x - 12, actor.y + 38);
-      ctx.moveTo(actor.x, actor.y + 18);
-      ctx.lineTo(actor.x + 12, actor.y + 38);
+      ctx.moveTo(actor.x, actor.y + 24);
+      ctx.lineTo(actor.x - 10, actor.y + 44);
+      ctx.moveTo(actor.x, actor.y + 24);
+      ctx.lineTo(actor.x + 10, actor.y + 44);
+      ctx.stroke();
+
+      ctx.beginPath();
       ctx.moveTo(actor.x, actor.y - 20);
       ctx.lineTo(actor.x - 22, actor.y - 10);
       ctx.moveTo(actor.x, actor.y - 20);
@@ -534,8 +553,8 @@
       ctx.stroke();
 
       if (actor.action === 'punch') {
-        ctx.strokeStyle = isPlayer ? 'rgba(100,255,255,0.8)' : 'rgba(255,200,80,0.85)';
-        ctx.lineWidth = 8;
+        ctx.strokeStyle = actor.isBoss ? 'rgba(255,192,90,0.9)' : 'rgba(100,255,255,0.8)';
+        ctx.lineWidth = 10;
         ctx.beginPath();
         ctx.moveTo(armBaseX, actor.y - 20);
         ctx.lineTo(punchX, actor.y - 20);
@@ -543,22 +562,37 @@
       }
 
       if (actor.action === 'kick') {
-        ctx.beginPath();
         const kickX = actor.x + (isPlayer ? 28 : -28);
-        ctx.strokeStyle = isPlayer ? 'rgba(100,255,255,0.8)' : 'rgba(255,200,80,0.85)';
-        ctx.lineWidth = 8;
+        ctx.strokeStyle = actor.isBoss ? 'rgba(255,192,90,0.9)' : 'rgba(100,255,255,0.8)';
+        ctx.lineWidth = 10;
+        ctx.beginPath();
         ctx.moveTo(actor.x, actor.y + 16);
         ctx.lineTo(kickX, actor.y + 36);
         ctx.stroke();
       }
 
+      if (actor.isBoss) {
+        ctx.fillStyle = 'rgba(255, 190, 100, 0.85)';
+        ctx.fillRect(actor.x - 56, actor.y - 28, 40, 16);
+        ctx.fillRect(actor.x - 48, actor.y - 40, 12, 40);
+        ctx.strokeStyle = '#ffdb94';
+        ctx.lineWidth = 3;
+        ctx.strokeRect(actor.x - 56, actor.y - 28, 40, 16);
+        ctx.strokeRect(actor.x - 48, actor.y - 40, 12, 40);
+        ctx.beginPath();
+        ctx.moveTo(actor.x - 38, actor.y - 40);
+        ctx.lineTo(actor.x - 28, actor.y - 52);
+        ctx.lineTo(actor.x - 18, actor.y - 40);
+        ctx.fillStyle = '#ffebac';
+        ctx.fill();
+      }
+
       ctx.strokeStyle = color;
-      ctx.lineWidth = 6;
+      ctx.lineWidth = 4;
       ctx.beginPath();
       ctx.moveTo(actor.x, actor.y - 8);
       ctx.lineTo(actor.x - 18, actor.y - 18);
       ctx.stroke();
-      ctx.strokeStyle = color;
       ctx.beginPath();
       ctx.moveTo(actor.x, actor.y - 8);
       ctx.lineTo(actor.x + 18, actor.y - 18);
