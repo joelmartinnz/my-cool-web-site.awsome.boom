@@ -389,26 +389,110 @@
     function drawRobloxPlayer(player) {
       const baseX = player.x;
       const baseY = player.y;
+      const front = player.color;
+      const side = 'rgba(0,0,0,0.14)';
+      const top = 'rgba(255,255,255,0.16)';
+      const shadow = 'rgba(0,0,0,0.14)';
       robloxCtx.save();
-      robloxCtx.fillStyle = 'rgba(0,0,0,0.16)';
-      robloxCtx.fillRect(baseX - 20, baseY + 60, 40, 8);
-      robloxCtx.fillStyle = player.color;
-      robloxCtx.fillRect(baseX - 18, baseY, 36, 48);
-      robloxCtx.fillRect(baseX - 14, baseY - 28, 28, 28);
-      robloxCtx.fillRect(baseX - 18, baseY + 48, 10, 28);
-      robloxCtx.fillRect(baseX + 8, baseY + 48, 10, 28);
-      robloxCtx.fillRect(baseX - 26, baseY + 4, 8, 30);
-      robloxCtx.fillRect(baseX + 18, baseY + 4, 8, 30);
-      robloxCtx.fillStyle = '#222';
-      robloxCtx.fillRect(baseX - 7, baseY - 20, 6, 6);
-      robloxCtx.fillRect(baseX + 3, baseY - 20, 6, 6);
+      robloxCtx.fillStyle = shadow;
+      robloxCtx.beginPath();
+      robloxCtx.ellipse(baseX, baseY + 72, 30, 10, 0, 0, Math.PI * 2);
+      robloxCtx.fill();
+
+      // Legs
+      robloxCtx.fillStyle = front;
+      robloxCtx.fillRect(baseX - 20, baseY + 30, 16, 30);
+      robloxCtx.fillRect(baseX + 4, baseY + 30, 16, 30);
+      robloxCtx.fillStyle = side;
+      robloxCtx.beginPath();
+      robloxCtx.moveTo(baseX - 4, baseY + 30);
+      robloxCtx.lineTo(baseX, baseY + 28);
+      robloxCtx.lineTo(baseX, baseY + 60);
+      robloxCtx.lineTo(baseX - 4, baseY + 62);
+      robloxCtx.closePath();
+      robloxCtx.fill();
+      robloxCtx.beginPath();
+      robloxCtx.moveTo(baseX + 20, baseY + 30);
+      robloxCtx.lineTo(baseX + 24, baseY + 28);
+      robloxCtx.lineTo(baseX + 24, baseY + 60);
+      robloxCtx.lineTo(baseX + 20, baseY + 62);
+      robloxCtx.closePath();
+      robloxCtx.fill();
+
+      // Body cube
+      robloxCtx.fillStyle = front;
+      robloxCtx.fillRect(baseX - 20, baseY - 10, 40, 44);
+      robloxCtx.fillStyle = top;
+      robloxCtx.beginPath();
+      robloxCtx.moveTo(baseX - 20, baseY - 10);
+      robloxCtx.lineTo(baseX, baseY - 30);
+      robloxCtx.lineTo(baseX + 20, baseY - 10);
+      robloxCtx.lineTo(baseX, baseY + 10);
+      robloxCtx.closePath();
+      robloxCtx.fill();
+      robloxCtx.fillStyle = side;
+      robloxCtx.beginPath();
+      robloxCtx.moveTo(baseX + 20, baseY - 10);
+      robloxCtx.lineTo(baseX + 30, baseY - 6);
+      robloxCtx.lineTo(baseX + 30, baseY + 32);
+      robloxCtx.lineTo(baseX + 20, baseY + 42);
+      robloxCtx.closePath();
+      robloxCtx.fill();
+
+      // Head cube
+      robloxCtx.fillStyle = front;
+      robloxCtx.fillRect(baseX - 16, baseY - 54, 32, 28);
+      robloxCtx.fillStyle = top;
+      robloxCtx.beginPath();
+      robloxCtx.moveTo(baseX - 16, baseY - 54);
+      robloxCtx.lineTo(baseX, baseY - 74);
+      robloxCtx.lineTo(baseX + 16, baseY - 54);
+      robloxCtx.lineTo(baseX, baseY - 34);
+      robloxCtx.closePath();
+      robloxCtx.fill();
+      robloxCtx.fillStyle = side;
+      robloxCtx.beginPath();
+      robloxCtx.moveTo(baseX + 16, baseY - 54);
+      robloxCtx.lineTo(baseX + 24, baseY - 48);
+      robloxCtx.lineTo(baseX + 24, baseY - 22);
+      robloxCtx.lineTo(baseX + 16, baseY - 16);
+      robloxCtx.closePath();
+      robloxCtx.fill();
+
+      // Arms
+      robloxCtx.fillStyle = front;
+      robloxCtx.fillRect(baseX - 36, baseY - 4, 16, 32);
+      robloxCtx.fillRect(baseX + 20, baseY - 4, 16, 32);
+      robloxCtx.fillStyle = side;
+      robloxCtx.beginPath();
+      robloxCtx.moveTo(baseX - 20, baseY);
+      robloxCtx.lineTo(baseX - 16, baseY - 4);
+      robloxCtx.lineTo(baseX - 16, baseY + 28);
+      robloxCtx.lineTo(baseX - 20, baseY + 32);
+      robloxCtx.closePath();
+      robloxCtx.fill();
+      robloxCtx.beginPath();
+      robloxCtx.moveTo(baseX + 36, baseY);
+      robloxCtx.lineTo(baseX + 40, baseY - 4);
+      robloxCtx.lineTo(baseX + 40, baseY + 28);
+      robloxCtx.lineTo(baseX + 36, baseY + 32);
+      robloxCtx.closePath();
+      robloxCtx.fill();
+
+      // Face
+      robloxCtx.fillStyle = '#111';
+      robloxCtx.fillRect(baseX - 10, baseY - 48, 8, 8);
+      robloxCtx.fillRect(baseX + 2, baseY - 48, 8, 8);
       robloxCtx.fillStyle = '#fff';
-      robloxCtx.fillRect(baseX - 6, baseY - 18, 4, 4);
-      robloxCtx.fillRect(baseX + 4, baseY - 18, 4, 4);
+      robloxCtx.fillRect(baseX - 8, baseY - 46, 4, 4);
+      robloxCtx.fillRect(baseX + 4, baseY - 46, 4, 4);
+      robloxCtx.fillStyle = '#222';
+      robloxCtx.fillRect(baseX - 6, baseY - 32, 12, 4);
+
       if (player.attackCooldown > 0) {
         robloxCtx.fillStyle = 'rgba(255,255,255,0.85)';
-        robloxCtx.fillRect(baseX - 28, baseY + 8, 8, 8);
-        robloxCtx.fillRect(baseX + 20, baseY + 8, 8, 8);
+        robloxCtx.fillRect(baseX - 30, baseY + 2, 10, 10);
+        robloxCtx.fillRect(baseX + 20, baseY + 2, 10, 10);
       }
       robloxCtx.restore();
     }
