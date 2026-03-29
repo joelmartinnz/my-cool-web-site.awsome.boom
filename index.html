@@ -652,23 +652,23 @@ function project3D(x, y, z) {
       refreshAbilityDisplay();
     }
 
-    const selectElement = document.getElementById('characterSelect');
-    if (selectElement) {
-      selectElement.addEventListener('change', refreshAbilityDisplay);
-    }
-    refreshAbilityDisplay();
-
     // Warhammer Battle Game
     const fightCanvas = document.getElementById('warhammerCanvas');
     const fightCtx = fightCanvas.getContext('2d');
     let fightRunning = false;
     let bossMode = false;
-    let player = { x: 140, y: 220, health: 100, action: 'idle', timer: 0 };
-    let enemy = { x: 460, y: 220, health: 100, action: 'idle', timer: 0, cooldown: 30, isBoss: false };
+    let player = { x: 140, y: 220, health: 100, maxHealth: 100, action: 'idle', timer: 0, abilityCooldown: 0, nextAttackBonus: 0, shield: 0 };
+    let enemy = { x: 460, y: 220, health: 100, maxHealth: 100, action: 'idle', timer: 0, cooldown: 30, isBoss: false };
     let fightMessage = 'Press Start to deploy Lord Guilliman.';
     const fightKeys = { left: false, right: false };
     let sparks = [];
     let currentLevel = 1;
+
+    const selectElement = document.getElementById('characterSelect');
+    if (selectElement) {
+      selectElement.addEventListener('change', refreshAbilityDisplay);
+    }
+    refreshAbilityDisplay();
     
     function clamp(value, min, max) {
       return Math.max(min, Math.min(max, value));
