@@ -193,12 +193,28 @@
   
   <div class="game-card">
     <h2>Warhammer: Legendary Duel</h2>
-  <p>Use A/D to move, W to strike with your blade, S to charge the enemy. Deploy Lord Guilliman in an epic clash against the Chaos Overlord.</p>
+  <p>Use A/D to move, W to strike with your blade, S to charge the enemy. Deploy your chosen warrior in an epic clash against the Chaos Overlord.</p>
+  <label for="characterSelect" style="display:block; margin: 16px 0 6px; font-weight: 700;">Choose your warrior:</label>
+  <select id="characterSelect" style="width:100%; max-width:360px; padding: 12px 14px; border-radius: 18px; border: 1px solid rgba(255,255,255,0.2); background: rgba(255,255,255,0.08); color: #f8fbff; margin-bottom: 14px;">
+    <option value="roboute">Roboute Guilliman</option>
+    <option value="calgar">Marneus Calgar</option>
+    <option value="farsight">Commander Farsight</option>
+    <option value="sanguinius">Sanguinius</option>
+    <option value="azrael">Azrael</option>
+    <option value="sisters">Sister Superior</option>
+    <option value="cawl">Archmagos Cawl</option>
+    <option value="kitanica">Kitanica</option>
+    <option value="cypher">Cypher</option>
+    <option value="creed">Lord Castellan Ursarkar E. Creed</option>
+  </select>
   <div class="warhammer-banner">
     <img alt="Warhammer banner" src="data:image/svg+xml;utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 320 180'%3E%3Cdefs%3E%3ClinearGradient id='bg' x1='0' y1='0' x2='1' y2='1'%3E%3Cstop offset='0%' stop-color='%2307203a'/%3E%3Cstop offset='100%' stop-color='%230d3a60'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='320' height='180' rx='24' fill='url(%23bg)'/%3E%3Ctext x='160' y='100' font-family='Inter,Arial,sans-serif' font-size='32' fill='%23e2f5ff' text-anchor='middle'%3EWARHAMMER%3C/text%3E%3C/svg%3E" />
   </div>
-  <button id="startFightBtn" onclick="startFight()">Deploy Guilliman</button>
+  <button id="startFightBtn" onclick="startFight()">Deploy Champion</button>
   <button id="startBossBtn" onclick="startBossFight()">Summon Chaos Overlord</button>
+  <button id="abilityBtn" onclick="useAbility()" style="margin-left: 12px;">Use Ability (E)</button>
+  <p id="abilityInfo" style="margin: 10px 0 4px; opacity: 0.95;"></p>
+  <p id="abilityStatus" style="margin: 0 0 10px; opacity: 0.8;"></p>
   <canvas id="warhammerCanvas" width="600" height="300" style="display: block; margin-top: 10px;"></canvas>
   <p id="fightStatus">Press Start to deploy Lord Guilliman.</p>
   </div>
@@ -583,6 +599,46 @@ function project3D(x, y, z) {
 
     resetRobloxGame();
 
+    const warhammerCharacters = {
+      roboute: { name: 'Roboute Guilliman', health: 140, color: '#a8f8ff', ability: { name: 'Phoenix Spear', description: 'Power strike that ignores armor and deals heavy damage.', cooldown: 90, execute(player, enemy) { const distance = Math.abs(player.x - enemy.x); if (distance <= 240) { const damage = 30; enemy.health = Math.max(0, enemy.health - damage); return `Phoenix Spear strikes for ${damage}!`; } return 'Phoenix Spear missed because the enemy is too far.'; } } },
+      calgar: { name: 'Marneus Calgar', health: 130, color: '#83c3ff', ability: { name: 'Battle Focus', description: 'Heal and empower your next attack.', cooldown: 80, execute(player) { const heal = Math.min(player.maxHealth - player.health, 22); player.health += heal; player.nextAttackBonus = (player.nextAttackBonus || 0) + 8; return `Calgar heals ${heal} HP and readies a stronger strike.`; } } },
+      farsight: { name: 'Commander Farsight', health: 120, color: '#8fc2ff', ability: { name: 'Plasma Volley', description: 'Ranged blast that hits from afar.', cooldown: 70, execute(player, enemy) { const distance = Math.abs(player.x - enemy.x); if (distance <= 360) { const damage = 20; enemy.health = Math.max(0, enemy.health - damage); return `Plasma Volley hits for ${damage} damage!`; } return 'Plasma Volley fails to reach the target.'; } } },
+      sanguinius: { name: 'Sanguinius', health: 125, color: '#ff9f9f', ability: { name: 'Winged Charge', description: 'Dash and smash the enemy with a devastating blow.', cooldown: 85, execute(player, enemy) { player.x = clamp(enemy.x - 70, 70, 360); const damage = 26; enemy.health = Math.max(0, enemy.health - damage); return `Winged Charge slams into the foe for ${damage}!`; } } },
+      azrael: { name: 'Azrael', health: 120, color: '#f8d98c', ability: { name: 'Shield of Faith', description: 'Raise a holy shield that halves the next incoming damage.', cooldown: 75, execute(player) { player.shield = 0.5; return 'Shield of Faith is active. Next hit deals half damage.'; } } },
+      sisters: { name: 'Sister Superior', health: 110, color: '#ffb8d0', ability: { name: 'Divine Prayer', description: 'Restore health with a healing prayer.', cooldown: 60, execute(player) { const heal = Math.min(player.maxHealth - player.health, 24); player.health += heal; return `Divine Prayer heals ${heal} HP.`; } } },
+      cawl: { name: 'Archmagos Cawl', health: 100, color: '#d0d0ff', ability: { name: 'Omniscience', description: 'Advanced machine logic heals and steadies you.', cooldown: 65, execute(player) { const heal = Math.min(player.maxHealth - player.health, 18); player.health += heal; player.nextAttackBonus = (player.nextAttackBonus || 0) + 4; return `Omniscience restores ${heal} HP and sharpens your aim.`; } } },
+      kitanica: { name: 'Kitanica', health: 115, color: '#c8efff', ability: { name: 'Blade Flurry', description: 'Unleash a rapid multi-cut combo.', cooldown: 70, execute(player, enemy) { const damage = 22; enemy.health = Math.max(0, enemy.health - damage); return `Blade Flurry lands ${damage} damage in a blur!`; } } },
+      cypher: { name: 'Cypher', health: 105, color: '#d6d6d6', ability: { name: 'Silent Strike', description: 'A precision attack that hits harder up close.', cooldown: 70, execute(player, enemy) { const distance = Math.abs(player.x - enemy.x); if (distance <= 140) { const damage = 24; enemy.health = Math.max(0, enemy.health - damage); return `Silent Strike deals ${damage} damage!`; } return 'Silent Strike needs you closer to the enemy.'; } } },
+      creed: { name: 'Lord Castellan Ursarkar E. Creed', health: 120, color: '#d0b87a', ability: { name: 'Imperial Order', description: 'Stun the enemy by forcing them to hesitate.', cooldown: 85, execute(player, enemy) { enemy.cooldown += 22; return 'Imperial Order slows the enemy reaction!'; } } }
+    };
+
+    function getSelectedWarhammerCharacter() {
+      const selected = document.getElementById('characterSelect').value;
+      return warhammerCharacters[selected] || warhammerCharacters.roboute;
+    }
+
+    function refreshAbilityDisplay() {
+      const selected = getSelectedWarhammerCharacter();
+      document.getElementById('abilityInfo').textContent = `${selected.ability.name}: ${selected.ability.description}`;
+      const status = player && player.abilityCooldown > 0 ? `Cooldown: ${player.abilityCooldown}` : 'Ready to use';
+      document.getElementById('abilityStatus').textContent = `Special Ability — ${selected.ability.name} (${status})`;
+      document.getElementById('abilityBtn').disabled = !fightRunning || (player && player.abilityCooldown > 0);
+    }
+
+    function useAbility() {
+      if (!fightRunning || !player || player.abilityCooldown > 0) return;
+      const result = player.ability.execute(player, enemy);
+      player.abilityCooldown = player.ability.cooldown;
+      fightMessage = result;
+      refreshAbilityDisplay();
+    }
+
+    const selectElement = document.getElementById('characterSelect');
+    if (selectElement) {
+      selectElement.addEventListener('change', refreshAbilityDisplay);
+    }
+    refreshAbilityDisplay();
+
     // Warhammer Battle Game
     const fightCanvas = document.getElementById('warhammerCanvas');
     const fightCtx = fightCanvas.getContext('2d');
@@ -602,20 +658,52 @@ function project3D(x, y, z) {
     function startFight() {
       bossMode = false;
       fightRunning = true;
-      player = { x: 140, y: 220, health: 120, maxHealth: 120, action: 'idle', timer: 0, name: 'Roboute Guilliman' };
-      enemy = { x: 460, y: 220, health: 120, maxHealth: 120, action: 'idle', timer: 0, cooldown: 30, isBoss: false, name: 'Chaos Champion' };
-      fightMessage = `Level ${currentLevel}: Lord Guilliman descends with legendary fury!`;
+      const selected = getSelectedWarhammerCharacter();
+      player = {
+        x: 140,
+        y: 220,
+        health: selected.health,
+        maxHealth: selected.health,
+        action: 'idle',
+        timer: 0,
+        name: selected.name,
+        color: selected.color,
+        isBoss: false,
+        ability: selected.ability,
+        abilityCooldown: 0,
+        nextAttackBonus: 0,
+        shield: 0
+      };
+      enemy = { x: 460, y: 220, health: 120, maxHealth: 120, action: 'idle', timer: 0, cooldown: 30, isBoss: false, name: 'Chaos Champion', color: '#57a7ff' };
+      fightMessage = `Level ${currentLevel}: ${selected.name} descends into battle!`;
       document.getElementById('fightStatus').textContent = fightMessage;
+      refreshAbilityDisplay();
       fightLoop();
     }
     
     function startBossFight() {
       bossMode = true;
       fightRunning = true;
-      player = { x: 140, y: 220, health: 120, maxHealth: 120, action: 'idle', timer: 0, name: 'Roboute Guilliman' };
-      enemy = { x: 470, y: 220, health: 250, maxHealth: 250, action: 'idle', timer: 0, cooldown: 15, isBoss: true, name: 'Gutrot Spume' };
-      fightMessage = `Level ${currentLevel}: Gutrot Spume erupts with ruinous plague!`;
+      const selected = getSelectedWarhammerCharacter();
+      player = {
+        x: 140,
+        y: 220,
+        health: selected.health,
+        maxHealth: selected.health,
+        action: 'idle',
+        timer: 0,
+        name: selected.name,
+        color: selected.color,
+        isBoss: false,
+        ability: selected.ability,
+        abilityCooldown: 0,
+        nextAttackBonus: 0,
+        shield: 0
+      };
+      enemy = { x: 470, y: 220, health: 250, maxHealth: 250, action: 'idle', timer: 0, cooldown: 15, isBoss: true, name: 'Gutrot Spume', color: '#ffb64a' };
+      fightMessage = `Level ${currentLevel}: ${selected.name} faces Gutrot Spume!`;
       document.getElementById('fightStatus').textContent = fightMessage;
+      refreshAbilityDisplay();
       fightLoop();
     }
     
@@ -630,8 +718,15 @@ function project3D(x, y, z) {
       const attackerName = attacker.name || (side === 'Player' ? 'Guilliman' : 'Enemy');
       if (distance <= 130) {
         let damage = action === 'kick' ? 18 : 12;
+        damage += attacker.nextAttackBonus || 0;
+        attacker.nextAttackBonus = 0;
         if (attacker.isBoss) damage += 10;
         if (defender.isBoss && side === 'Player') damage += 8;
+        if (defender.shield > 0) {
+          const shieldBlock = Math.floor(damage * defender.shield);
+          damage = Math.max(0, damage - shieldBlock);
+          defender.shield = 0;
+        }
         defender.health = Math.max(0, defender.health - damage);
         fightMessage = `${attackerName} ${action}s and deals ${damage}!`;
       } else {
@@ -653,6 +748,7 @@ function project3D(x, y, z) {
     
     function updateFight() {
       if (!fightRunning) return;
+      if (player.abilityCooldown > 0) player.abilityCooldown = Math.max(0, player.abilityCooldown - 1);
       if (fightKeys.left) player.x -= 4;
       if (fightKeys.right) player.x += 4;
       player.x = clamp(player.x, 70, 360);
@@ -717,7 +813,7 @@ function project3D(x, y, z) {
         }
       }
       updateSparks();
-      
+      refreshAbilityDisplay();
       document.getElementById('fightStatus').textContent = fightMessage;
     }
     
@@ -860,8 +956,8 @@ function project3D(x, y, z) {
       fightCtx.font = '16px Inter, Arial, sans-serif';
       fightCtx.fillText(player.name || 'Guilliman HP', 20, 22);
       fightCtx.fillText(enemy.name || (enemy.isBoss ? 'Chaos Overlord HP' : 'Enemy HP'), 420, 22);
-      drawWarhammerMarine(fightCtx, player, '#a8f8ff', true);
-      drawWarhammerMarine(fightCtx, enemy, enemy.isBoss ? '#ffb64a' : '#57a7ff', false);
+      drawWarhammerMarine(fightCtx, player, player.color || '#a8f8ff', true);
+      drawWarhammerMarine(fightCtx, enemy, enemy.color || (enemy.isBoss ? '#ffb64a' : '#57a7ff'), false);
       fightCtx.globalCompositeOperation = 'lighter';
       sparks.forEach(spark => {
         fightCtx.fillStyle = `rgba(170, 255, 255, ${spark.alpha})`;
@@ -894,6 +990,10 @@ function project3D(x, y, z) {
       if (key === 'd' || e.code === 'ArrowRight') fightKeys.right = true;
       if (fightRunning && (key === 'w' || e.code === 'ArrowUp')) setPlayerAction('punch');
       if (fightRunning && (key === 's' || e.code === 'ArrowDown')) setPlayerAction('kick');
+      if (fightRunning && key === 'e') {
+        e.preventDefault();
+        useAbility();
+      }
     });
     
     window.addEventListener('keyup', (e) => {
